@@ -35,4 +35,29 @@ class InteractiveRecord
     DB[:conn].execute(sql)
     @id = DB[:conn].execute("SELECT last_insert_rowid() FROM #{table_name_for_insert}")[0][0]
   end
+
+  def table_name_for_insert
+    self.class.table_name
+  end
+
+  def values_for_insert
+    values=[]
+    self.class.column_names.each do |col_name|
+      values << "'#{send(col_name)}'" unless send(col_name).nill?
+    end
+    values.join(",")
+  end
+
+  def col_names_for_insert
+    self.class.colimn_names.delete_if {|col| col == "id"}.join(",")
+  end
+
+  def self.find_by_name(name)
+    sql = "SELECT * FROM #{self.table_name} WHERE name '#{name}'"
+    DB[:conn].execute(sql)
+
+    def self.find_by(thing)
+      sql = "SELECT * FROM #{self.table_name} WHERE #{thing.keys.join} = '#{thing.values.join}'" 
+      DB[:conn].execute(sql)
+    end
 end
