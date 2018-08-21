@@ -10,13 +10,11 @@ class InteractiveRecord
   def self.column_names
     DB[:conn].results_as_hash = true
 
-    sql = "pragma table_info('#{table_name}')"
+    sql = "PRAGMA table_info('#{self.table_name}')"
 
     table_info = DB[:conn].execute(sql)
     column_names = []
-    table_info.each do |row|
-      column_names << row["name"]
-    end
+    table_info.each{|row| column_names << row["name"]}
     column_names.compact
   end
 
@@ -57,8 +55,11 @@ class InteractiveRecord
     DB[:conn].execute(sql)
   end
 
-    def self.find_by(thing)
-      sql = "SELECT * FROM #{self.table_name} WHERE #{thing.keys.join} = '#{thing.values.join}'"
-      DB[:conn].execute(sql)
-    end
+  def self.find_by(options = {})
+  sql = <<-SQL
+    SELECT * FROM #{self.table_name}
+    WHERE #{options.keys.first.to_s} = "#{options[options.keys.first]}"
+  SQL
+  DB[:conn].execute(sql)
+end
 end
