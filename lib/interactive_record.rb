@@ -57,7 +57,7 @@ class InteractiveRecord
     DB[:conn].execute(sql)
 
     def self.find_by(thing)
-      sql = "SELECT * FROM #{self.table_name} WHERE #{thing.keys.join} = '#{thing.values.join}'" 
+      sql = "SELECT * FROM #{self.table_name} WHERE #{thing.keys.join} = '#{thing.values.join}'"
       DB[:conn].execute(sql)
     end
 end
